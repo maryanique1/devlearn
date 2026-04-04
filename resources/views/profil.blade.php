@@ -27,8 +27,20 @@
     .score-green { color:#4caf50; font-weight:bold; } .score-blue { color:#2196f3; font-weight:bold; } .score-orange { color:#ff9800; font-weight:bold; } .score-red { color:#f44336; font-weight:bold; }
     .msg-ok { background:#27ae60; color:#fff; padding:10px 20px; border-radius:8px; text-align:center; margin-bottom:20px; }
     .msg-err { background:#e74c3c; color:#fff; padding:10px 20px; border-radius:8px; text-align:center; margin-bottom:20px; }
+
+    /* Radar + Badges row */
+    .profil-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+    .profil-card { background:var(--card); border-radius:14px; padding:24px; border:1px solid var(--border); }
+    .profil-card h3 { font-size:14px; font-weight:700; color:var(--accent); margin-bottom:16px; }
+    .badges-grid { display:flex; flex-wrap:wrap; gap:12px; }
+    .badge-item { display:flex; align-items:center; gap:10px; background:var(--input); border-radius:10px; padding:10px 14px; font-size:13px; transition:transform .2s; }
+    .badge-item:hover { transform:translateY(-2px); }
+    .badge-item.locked { opacity:0.35; filter:grayscale(1); }
+    .badge-icon { font-size:24px; flex-shrink:0; }
+    .badge-name { font-weight:700; font-size:12px; }
+    .badge-desc { font-size:10px; color:var(--muted); }
     .empty { text-align:center; padding:30px; color:var(--muted); }
-    @media(max-width:768px) { .forms-grid{grid-template-columns:1fr;} .user-card{flex-direction:column;text-align:center;} .hide-mobile{display:none;} .stats{grid-template-columns:1fr 1fr;} table{display:block;overflow-x:auto;} }
+    @media(max-width:768px) { .forms-grid{grid-template-columns:1fr;} .user-card{flex-direction:column;text-align:center;} .hide-mobile{display:none;} .stats{grid-template-columns:1fr 1fr;} table{display:block;overflow-x:auto;} .profil-row{grid-template-columns:1fr;} }
     @media(max-width:480px) { .user-card{padding:20px;} .avatar{width:56px;height:56px;font-size:22px;} .stats{grid-template-columns:1fr;} .stat-card{padding:14px;} .stat-num{font-size:22px;} .form-card{padding:18px;} .form-card h3{font-size:14px;} .section-title{font-size:11px;} h1{font-size:22px !important;} th,td{padding:8px 10px;font-size:12px;} }
 @endsection
 
@@ -40,7 +52,7 @@
     @if($errors->any())<div class="msg-err">{{ $errors->first() }}</div>@endif
 
     <div class="user-card">
-        <label for="avatar-input" class="avatar-wrapper" style="position:relative;cursor:pointer;display:inline-block;">
+        <div class="avatar-wrapper" style="position:relative;display:inline-block;">
             @if($user->avatar)
                 <img src="/storage/{{ $user->avatar }}" alt="avatar" style="width:70px;height:70px;border-radius:50%;object-fit:cover;">
             @else
@@ -49,11 +61,20 @@
             <div style="position:absolute;bottom:0;right:0;background:var(--accent);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
                 <i data-lucide="camera" style="width:14px;height:14px;color:#fff;"></i>
             </div>
-        </label>
+            <input type="file" id="avatar-input" name="avatar" accept="image/*" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:5;">
+        </div>
         <form id="avatar-form" method="POST" action="/profil/update-avatar" enctype="multipart/form-data" style="display:none;">
             @csrf
-            <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="document.getElementById('avatar-form').submit();">
+            <input type="file" id="avatar-hidden" name="avatar">
         </form>
+        <script>
+        document.getElementById('avatar-input').addEventListener('change', function() {
+            const dt = new DataTransfer();
+            dt.items.add(this.files[0]);
+            document.getElementById('avatar-hidden').files = dt.files;
+            document.getElementById('avatar-form').submit();
+        });
+        </script>
         <div class="user-info">
             <h2>{{ $user->nom ?? $user->name }}</h2>
             <p>{{ $user->email }}</p>
@@ -69,6 +90,47 @@
         <div class="stat-card"><div class="stat-num">{{ $avgPct }}%</div><div class="stat-lbl">Score moyen</div></div>
         <div class="stat-card"><div class="stat-num">{{ $bestPct }}%</div><div class="stat-lbl">Meilleur score</div></div>
         <div class="stat-card"><div class="stat-num">{{ $totalTime > 3600 ? round($totalTime/3600,1).'h' : round($totalTime/60).'m' }}</div><div class="stat-lbl">Temps total</div></div>
+    </div>
+
+    <!-- Radar + Badges -->
+    @php
+        $radarLabels = ['C++','HTML','CSS','JS','SQL','PHP'];
+        $radarMap = ['C++'=>'qcm-cpp','HTML'=>'qcm-html','CSS'=>'qcm-css','JS'=>'qcm-js','SQL'=>'qcm-sql','PHP'=>'qcm-php'];
+        $radarData = [];
+        foreach($radarLabels as $l) {
+            $qn = $radarMap[$l];
+            $radarData[] = isset($bestPerQcm[$qn]) ? (int)$bestPerQcm[$qn] : 0;
+        }
+
+        // Badges
+        $badges = [
+            ['icon'=>'&#127942;','name'=>'Premier QCM','desc'=>'Completer votre premier QCM','unlocked'=>$totalAttempts >= 1],
+            ['icon'=>'&#11088;','name'=>'Score parfait','desc'=>'Obtenir 100% sur un QCM','unlocked'=>$bestPct >= 100],
+            ['icon'=>'&#128170;','name'=>'Perseverant','desc'=>'10 tentatives ou plus','unlocked'=>$totalAttempts >= 10],
+            ['icon'=>'&#127891;','name'=>'Diplome','desc'=>'Valider l\'examen final (80%+)','unlocked'=>isset($bestPerQcm['qcm-exam']) && $bestPerQcm['qcm-exam'] >= 80],
+            ['icon'=>'&#128640;','name'=>'Polyvalent','desc'=>'Completer 3 technologies','unlocked'=>count(array_filter($radarData, fn($s) => $s >= 60)) >= 3],
+            ['icon'=>'&#129351;','name'=>'Maitre du web','desc'=>'Toutes les 6 technologies validees','unlocked'=>count(array_filter($radarData, fn($s) => $s >= 60)) >= 6],
+        ];
+    @endphp
+    <div class="profil-row">
+        <div class="profil-card">
+            <h3>Competences par technologie</h3>
+            <canvas id="radarChart" height="220"></canvas>
+        </div>
+        <div class="profil-card">
+            <h3>Badges</h3>
+            <div class="badges-grid">
+                @foreach($badges as $b)
+                <div class="badge-item {{ $b['unlocked'] ? '' : 'locked' }}">
+                    <div class="badge-icon">{!! $b['icon'] !!}</div>
+                    <div>
+                        <div class="badge-name">{{ $b['name'] }}</div>
+                        <div class="badge-desc">{{ $b['desc'] }}</div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     <div class="section-title">Modifier mon profil</div>
@@ -138,6 +200,36 @@
 @endsection
 
 @section('scripts')
+<script>
+// Radar chart
+new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
+    data: {
+        labels: @json($radarLabels),
+        datasets: [{
+            label: 'Score %',
+            data: @json($radarData),
+            backgroundColor: 'rgba(137,111,61,0.15)',
+            borderColor: '#896f3d',
+            borderWidth: 2,
+            pointBackgroundColor: '#896f3d',
+            pointRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            r: {
+                beginAtZero: true, max: 100,
+                ticks: { stepSize: 25, color: '#888', backdropColor: 'transparent' },
+                grid: { color: 'rgba(128,128,128,0.15)' },
+                pointLabels: { color: '#888', font: { size: 12, weight: 'bold' } }
+            }
+        },
+        plugins: { legend: { display: false } }
+    }
+});
+</script>
 @if(count($bestPerQcm) > 0)
 <script>
 const labels = @json(array_keys($bestPerQcm));

@@ -43,4 +43,31 @@ class DashboardController extends Controller
 
         return view('dashboard', compact('user', 'userScores', 'userProgress', 'totalCompleted', 'totalAttempts', 'avgBest', 'canCertificate', 'path_steps'));
     }
+
+    private function getUserData()
+    {
+        $user = Auth::user();
+        $userScores = Cache::remember("scores_user_{$user->id}", 60, fn() =>
+            Score::where('user_id', $user->id)
+                ->select('qcm_name', DB::raw('MAX(percentage) as best'), DB::raw('COUNT(*) as attempts'), DB::raw('MAX(completed_at) as last_at'))
+                ->groupBy('qcm_name')->get()->keyBy('qcm_name')
+        );
+        $userProgress = Cache::remember("progress_user_{$user->id}", 60, fn() =>
+            Progress::where('user_id', $user->id)->get()->keyBy('qcm_name')
+        );
+        return compact('user', 'userScores', 'userProgress');
+    }
+
+    public function parcours()
+    {
+        $data = $this->getUserData();
+        return view('parcours', $data);
+    }
+
+    public function epreuves()
+    {
+        $data = $this->getUserData();
+        $data['canCertificate'] = isset($data['userScores']['qcm-exam']) && (int)$data['userScores']['qcm-exam']->best >= 80;
+        return view('epreuves', $data);
+    }
 }

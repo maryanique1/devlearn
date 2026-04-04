@@ -17,12 +17,19 @@
             --bg:#1a293f; --card:#202f45; --text:#eaeff3; --muted:#8a95a5; --dim:#606b7a;
             --border:rgba(64,71,81,0.4); --accent:#896f3d; --input:#202f45; --code:#152238;
             --topbar-bg:#1a293f; --topbar-shadow:none;
-            /* Dashboard aliases */
             --card-bg:#202f45; --stat-card-bg:#202f45; --card-shadow:0 12px 30px rgba(0,0,0,0.3);
             --meta-bg:#152238; --meta-text:#8a95a5; --path-line:#404751; --text-dim:#606b7a;
-            /* QCM aliases */
             --bg-main:#1a293f; --bg-card:#202f45; --bg-input:#202f45; --bg-code:#152238;
             --text-main:#eaeff3; --text-muted:#8a95a5; --border-subtle:rgba(64,71,81,0.4);
+        }
+        body.theme-light {
+            --bg:#f0f2f5; --card:#ffffff; --text:#1a202c; --muted:#6b7280; --dim:#9ca3af;
+            --border:rgba(0,0,0,0.1); --accent:#896f3d; --input:#f3f4f6; --code:#f8f9fa;
+            --topbar-bg:#ffffff; --topbar-shadow:0 1px 3px rgba(0,0,0,0.08);
+            --card-bg:#ffffff; --stat-card-bg:#ffffff; --card-shadow:0 8px 24px rgba(0,0,0,0.08);
+            --meta-bg:#f3f4f6; --meta-text:#6b7280; --path-line:#d1d5db; --text-dim:#9ca3af;
+            --bg-main:#f0f2f5; --bg-card:#ffffff; --bg-input:#f3f4f6; --bg-code:#f8f9fa;
+            --text-main:#1a202c; --text-muted:#6b7280; --border-subtle:rgba(0,0,0,0.1);
         }
         * { box-sizing:border-box; margin:0; padding:0; }
         html, body { overflow-x:hidden; width:100%; }
@@ -67,8 +74,8 @@
         .sidebar-user .name { font-weight:700; font-size:16px; }
         .sidebar-nav { flex:1; padding:12px 0; overflow-y:auto; }
         .sidebar-nav a { display:flex; align-items:center; gap:14px; padding:12px 24px; text-decoration:none; color:var(--text); font-size:14px; transition:background .2s; }
-        .sidebar-nav a:hover { background:rgba(233,69,96,0.08); }
-        .sidebar-nav a.active { background:rgba(233,69,96,0.12); border-right:3px solid var(--accent); }
+        .sidebar-nav a:hover { background:rgba(137,111,61,0.1); color:var(--accent); }
+        .sidebar-nav a.active { background:rgba(137,111,61,0.15); border-right:3px solid var(--accent); color:var(--accent); }
         .sidebar-nav a .icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
         .sidebar-nav .separator { height:1px; background:var(--border); margin:8px 24px; }
         .sidebar-nav a.danger { color:var(--accent); }
@@ -82,6 +89,7 @@
             .sidebar.open { transform:translateX(0); }
             .sidebar-close { display:flex !important; align-items:center; justify-content:center; width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.1); font-size:20px; }
             .topbar { margin-left:0; padding:12px 16px; }
+            .global-progress { margin-left:0; }
             .topbar-title { font-size:17px; }
             .main-content { margin-left:0; padding:20px 14px; }
             .btn-menu { display:flex !important; }
@@ -109,6 +117,14 @@
         .sidebar-nav a .icon { background:none !important; }
         .sidebar-nav a .icon svg { width:20px; height:20px; }
 
+        /* Theme toggle */
+        .btn-theme { background:none; border:2px solid var(--border); border-radius:10px; width:38px; height:38px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text); transition:all .3s; }
+        .btn-theme:hover { border-color:var(--accent); color:var(--accent); }
+
+        /* Global progress bar */
+        .global-progress { height:3px; background:var(--border); margin-left:280px; transition:margin-left .3s; }
+        .global-progress-fill { height:100%; background:linear-gradient(90deg, #896f3d, #f0db4f); border-radius:0 2px 2px 0; transition:width .8s ease; }
+
         /* Fix boutons resultats sur mobile */
         .btn-container { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:20px; }
         .btn-container .btn { margin-left:0 !important; }
@@ -118,7 +134,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     @yield('head')
 </head>
-<body>
+<body class="{{ $theme === 'light' ? 'theme-light' : '' }}">
 
 <!-- Topbar -->
 <div class="topbar">
@@ -128,7 +144,20 @@
     </div>
     <div class="topbar-right">
         <span class="topbar-user">Bonjour, <strong>{{ $userName }}</strong></span>
+        <button class="btn-theme" id="themeToggle" title="Changer le theme">
+            <i data-lucide="{{ $theme === 'light' ? 'moon' : 'sun' }}" style="width:18px;height:18px;"></i>
+        </button>
     </div>
+</div>
+@php
+    $globalScores = \App\Models\Score::where('user_id', $authUser->id ?? 0)
+        ->whereIn('qcm_name', ['qcm-cpp','qcm-html','qcm-css','qcm-js','qcm-sql','qcm-php'])
+        ->select('qcm_name', \Illuminate\Support\Facades\DB::raw('MAX(percentage) as best'))
+        ->groupBy('qcm_name')->get();
+    $globalPct = $globalScores->count() > 0 ? round($globalScores->avg('best')) : 0;
+@endphp
+<div class="global-progress">
+    <div class="global-progress-fill" style="width:{{ $globalPct }}%"></div>
 </div>
 
 <!-- Sidebar -->
@@ -148,10 +177,13 @@
     </div>
     <nav class="sidebar-nav">
         <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}"><span class="icon"><i data-lucide="layout-dashboard"></i></span> Tableau de bord</a>
-        <a href="/profil" class="{{ request()->is('profil') ? 'active' : '' }}"><span class="icon"><i data-lucide="user"></i></span> Mon profil</a>
+        <a href="/parcours" class="{{ request()->is('parcours') ? 'active' : '' }}"><span class="icon"><i data-lucide="book-open"></i></span> Parcours</a>
+        <a href="/epreuves" class="{{ request()->is('epreuves') ? 'active' : '' }}"><span class="icon"><i data-lucide="file-text"></i></span> Epreuves</a>
         <a href="/classement" class="{{ request()->is('classement') ? 'active' : '' }}"><span class="icon"><i data-lucide="trophy"></i></span> Classement</a>
+        <div class="separator"></div>
+        <a href="/profil" class="{{ request()->is('profil') ? 'active' : '' }}"><span class="icon"><i data-lucide="user"></i></span> Mon profil</a>
         @if($canCert)
-        <a href="/certificat" class="{{ request()->is('certificat') ? 'active' : '' }}"><span class="icon"><i data-lucide="award"></i></span> Mon certificat</a>
+        <a href="/certificat" class="{{ request()->is('certificat') ? 'active' : '' }}"><span class="icon"><i data-lucide="award"></i></span> Certificat</a>
         @endif
         <div class="separator"></div>
         @if($authUser->is_admin ?? false)
@@ -184,7 +216,22 @@ function closeSidebar() {
 }
 document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
 overlay.addEventListener('click', closeSidebar);
+
+// Theme toggle
+document.getElementById('themeToggle').addEventListener('click', () => {
+    const isLight = document.body.classList.toggle('theme-light');
+    const newTheme = isLight ? 'light' : 'dark';
+    fetch('/api/theme', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content},
+        body: JSON.stringify({theme: newTheme})
+    });
+    const icon = document.querySelector('#themeToggle i');
+    icon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+    lucide.createIcons();
+});
 </script>
+<script src="/js/quiz-effects.js"></script>
 @yield('scripts')
 </body>
 </html>

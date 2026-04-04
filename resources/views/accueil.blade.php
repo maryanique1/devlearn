@@ -88,6 +88,21 @@
         /* --- Animations --- */
         .reveal { opacity:0; transform:translateY(30px); transition:opacity .7s ease, transform .7s ease; }
         .reveal.visible { opacity:1; transform:translateY(0); }
+        .reveal:nth-child(2) { transition-delay:.1s; }
+        .reveal:nth-child(3) { transition-delay:.2s; }
+        .reveal:nth-child(4) { transition-delay:.3s; }
+        .reveal:nth-child(5) { transition-delay:.35s; }
+        .reveal:nth-child(6) { transition-delay:.4s; }
+
+        /* --- Hero entrance --- */
+        .hero-text { animation:heroFadeIn .8s ease both; }
+        .hero-visual { animation:heroFadeIn 1s ease .3s both; }
+        @keyframes heroFadeIn { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+
+        /* --- Mobile menu --- */
+        .mobile-toggle { display:none; background:none; border:2px solid rgba(64,71,81,0.5); border-radius:8px; padding:8px 10px; cursor:pointer; color:#eaeff3; }
+        .mobile-toggle:hover { border-color:#896f3d; }
+        .nav-links.open { display:flex !important; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:rgba(26,41,63,0.98); backdrop-filter:blur(16px); padding:20px; gap:12px; border-bottom:1px solid rgba(64,71,81,0.3); }
 
         /* --- Responsive --- */
         @media (max-width:900px) {
@@ -97,6 +112,7 @@
             .hero-visual { max-width:100%; }
             .navbar { padding:16px 20px; }
             .nav-links { display:none; }
+            .mobile-toggle { display:block; }
             .section { padding:60px 24px; }
             .section-header h2 { font-size:28px; }
             .cta { padding:80px 24px; }
@@ -143,7 +159,8 @@
 <!-- Navbar -->
 <nav class="navbar">
     <div class="navbar-brand">Dev <span>Learn</span></div>
-    <div class="nav-links">
+    <button class="mobile-toggle" id="mobileToggle"><i data-lucide="menu" style="width:20px;height:20px;"></i></button>
+    <div class="nav-links" id="navLinks">
         <a href="/login" class="btn btn-outline" style="padding:10px 20px;"><i data-lucide="log-in" style="width:15px;height:15px;"></i> Connexion</a>
         <a href="/register" class="btn btn-accent" style="padding:10px 20px;"><i data-lucide="arrow-right" style="width:15px;height:15px;"></i> Inscription</a>
     </div>
@@ -160,9 +177,10 @@
             <a href="/login" class="btn btn-outline btn-lg">J'ai deja un compte</a>
         </div>
         <div class="hero-metrics">
-            <div class="metric"><div class="metric-num">310+</div><div class="metric-lbl">Questions</div></div>
-            <div class="metric"><div class="metric-num">6</div><div class="metric-lbl">Technologies</div></div>
-            <div class="metric"><div class="metric-num">35+</div><div class="metric-lbl">Chapitres</div></div>
+            <div class="metric"><div class="metric-num" data-count="635">0</div><div class="metric-lbl">Questions</div></div>
+            <div class="metric"><div class="metric-num" data-count="6">0</div><div class="metric-lbl">Technologies</div></div>
+            <div class="metric"><div class="metric-num" data-count="42">0</div><div class="metric-lbl">Chapitres</div></div>
+            <div class="metric"><div class="metric-num" data-count="{{ \App\Models\User::count() }}">0</div><div class="metric-lbl">Inscrits</div></div>
         </div>
     </div>
     <div class="hero-visual">
@@ -265,12 +283,41 @@
 <script>
 lucide.createIcons();
 
+// Mobile menu toggle
+document.getElementById('mobileToggle').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+});
+
 // Scroll reveal
 const reveals = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
 }, { threshold: 0.15 });
 reveals.forEach(el => observer.observe(el));
+
+// Animated counters
+const counters = document.querySelectorAll('[data-count]');
+let countersStarted = false;
+const counterObserver = new IntersectionObserver((entries) => {
+    if (countersStarted) return;
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            countersStarted = true;
+            counters.forEach(el => {
+                const target = parseInt(el.dataset.count);
+                const duration = 1500;
+                const step = target / (duration / 16);
+                let current = 0;
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) { current = target; clearInterval(timer); }
+                    el.textContent = Math.floor(current) + (target > 10 ? '+' : '');
+                }, 16);
+            });
+        }
+    });
+}, { threshold: 0.5 });
+counters.forEach(el => counterObserver.observe(el));
 </script>
 </body>
 </html>

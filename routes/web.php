@@ -36,12 +36,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/profil/update-avatar', [ProfileController::class, 'updateAvatar']);
     Route::post('/profil/update-bio', [ProfileController::class, 'updateBio']);
 
+    Route::get('/parcours', [DashboardController::class, 'parcours'])->name('parcours');
+    Route::get('/epreuves', [DashboardController::class, 'epreuves'])->name('epreuves');
     Route::get('/classement', [LeaderboardController::class, 'index'])->name('classement');
     Route::get('/certificat', [CertificateController::class, 'show'])->name('certificat');
 
     Route::get('/quiz/{slug}', [QcmController::class, 'show'])->name('qcm.show');
 
     // API JSON
+    Route::post('/api/theme', [ThemeController::class, 'update']);
     Route::post('/api/scores', [ScoreController::class, 'store']);
     Route::get('/api/progress/{qcmName}', [ProgressController::class, 'show']);
     Route::post('/api/progress', [ProgressController::class, 'store']);
