@@ -766,6 +766,177 @@
                 <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm3'])</div>
             </a>
 
+            <a href="/quiz/4" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        Controle Techno Web
+                        <small>HTML, CSS, JS, PHP, MySQL</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    Controle Ecole Superieure Sainte Felicite. 20 questions sur les technologies web.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">20 questions</span>
+                    <span class="meta-tag">5 categories</span>
+                    <span class="meta-tag">Intermediaire</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm4'])</div>
+            </a>
+
+            <a href="/quiz/5" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        EPP — Licence Blanc
+                        <small>PHP, HTML, CSS, SQL</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    Examen blanc de licence — Epreuve de pratique professionnelle. 40 questions.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">40 questions</span>
+                    <span class="meta-tag">4 categories</span>
+                    <span class="meta-tag">Intermediaire</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm5'])</div>
+            </a>
+
+            <a href="/quiz/6" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        Examen National SIL 2025
+                        <small>HTML, CSS, PHP, MySQL</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    Epreuve pratique professionnelle — Examen National de Licence SIL. 25 questions.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">25 questions</span>
+                    <span class="meta-tag">4 categories</span>
+                    <span class="meta-tag">Avance</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm6'])</div>
+            </a>
+
+            <a href="/quiz/7" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        Examen National SIL 2023
+                        <small>HTML, CSS, JS, PHP, MySQL</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    Epreuve de pratique professionnelle — Licence SIL 2023. 40 questions.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">40 questions</span>
+                    <span class="meta-tag">5 categories</span>
+                    <span class="meta-tag">Avance</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm7'])</div>
+            </a>
+
+            <a href="/quiz/8" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        Epreuve Pratique 2025
+                        <small>HTML, CSS</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    Epreuve pratique SIL 2025. 40 questions centrees sur HTML et CSS.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">40 questions</span>
+                    <span class="meta-tag">2 categories</span>
+                    <span class="meta-tag">Intermediaire</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm8'])</div>
+            </a>
+
+            <a href="/quiz/9" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        QCM Pratique SIL
+                        <small>MySQL, HTML, CSS, JS, PHP</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    Epreuve de QCM pratique — 5 dossiers couvrant toutes les technologies. 40 questions.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">40 questions</span>
+                    <span class="meta-tag">5 categories</span>
+                    <span class="meta-tag">Intermediaire</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm9'])</div>
+            </a>
+
+            <a href="/quiz/10" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        QCM Pratique Licence
+                        <small>MySQL, HTML, CSS, JS, PHP</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    Epreuve de QCM pratique Licence — 5 dossiers, niveau intermediaire a avance. 40 questions.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">40 questions</span>
+                    <span class="meta-tag">5 categories</span>
+                    <span class="meta-tag">Avance</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm10'])</div>
+            </a>
+
+            <a href="/quiz/11" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        QCM Dev Web — Serie 4
+                        <small>HTML, CSS, JS, PHP, MySQL</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    40 questions fondamentales couvrant les bases du developpement web.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">40 questions</span>
+                    <span class="meta-tag">5 categories</span>
+                    <span class="meta-tag">Debutant</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm11'])</div>
+            </a>
+
+            <a href="/quiz/12" class="card card-mix">
+                <div class="card-header">
+                    <div class="card-logo logo-mix">Mix</div>
+                    <div class="card-title">
+                        QCM Dev Web — Serie 5
+                        <small>HTML, CSS, JS, PHP, MySQL</small>
+                    </div>
+                </div>
+                <div class="card-desc">
+                    40 questions sur les balises semantiques, CSS avance, boucles JS, PHP et SQL.
+                </div>
+                <div class="card-meta">
+                    <span class="meta-tag">40 questions</span>
+                    <span class="meta-tag">5 categories</span>
+                    <span class="meta-tag">Intermediaire</span>
+                </div>
+                <div class="card-score">@include('partials.score-badge', ['userScores' => $userScores, 'userProgress' => $userProgress, 'qcmName' => 'qcm12'])</div>
+            </a>
+
         </div>
     </div>
 

@@ -108,6 +108,11 @@
 
         .sidebar-nav a .icon { background:none !important; }
         .sidebar-nav a .icon svg { width:20px; height:20px; }
+
+        /* Fix boutons resultats sur mobile */
+        .btn-container { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:20px; }
+        .btn-container .btn { margin-left:0 !important; }
+
         @yield('styles')
     </style>
     <script src="https://unpkg.com/lucide@latest"></script>

@@ -397,12 +397,10 @@ const questions = [
     },
     {
         category: 'HTML',
-        question: 'Quelle balise <meta> permet de contrôler le comportement du viewport sur mobile ?',
-        options: ['<meta name="mobile">', '<meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="viewport">', '<meta name="responsive">', '<meta name="device">'],
+        question: 'Quelle balise meta permet de contrôler le comportement du viewport sur mobile ?',
+        options: ['meta name="mobile"', 'meta name="viewport"', 'meta name="responsive"', 'meta name="device"'],
         answer: 1,
-        explanation: '<meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> contrôle l\'affichage sur les appareils mobiles.'
+        explanation: 'La balise meta viewport avec content="width=device-width, initial-scale=1.0" contrôle l\'affichage sur les appareils mobiles.'
     },
     {
         category: 'HTML',
