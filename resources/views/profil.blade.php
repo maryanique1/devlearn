@@ -54,7 +54,7 @@
     <div class="user-card">
         <div class="avatar-wrapper" style="position:relative;display:inline-block;">
             @if($user->avatar)
-                <img src="/storage/{{ $user->avatar }}" alt="avatar" style="width:70px;height:70px;border-radius:50%;object-fit:cover;">
+                <img src="{{ $user->avatar }}" alt="avatar" style="width:70px;height:70px;border-radius:50%;object-fit:cover;">
             @else
                 <div class="avatar">{{ strtoupper(mb_substr($user->nom ?? $user->name, 0, 1)) }}</div>
             @endif

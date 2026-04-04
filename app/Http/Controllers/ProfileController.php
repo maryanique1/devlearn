@@ -70,12 +70,11 @@ class ProfileController extends Controller
         $request->validate(['avatar' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048']);
         $user = Auth::user();
 
-        if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
-        }
+        $file = $request->file('avatar');
+        $mime = $file->getMimeType();
+        $base64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
 
-        $path = $request->file('avatar')->store('avatars', 'public');
-        $user->update(['avatar' => $path]);
+        $user->update(['avatar' => $base64]);
         return back()->with('success', 'Photo de profil mise a jour.');
     }
 

@@ -169,7 +169,7 @@
     </div>
     <div class="sidebar-user">
         @if($authUser->avatar ?? false)
-            <img src="/storage/{{ $authUser->avatar }}" alt="avatar" style="width:50px;height:50px;border-radius:50%;object-fit:cover;margin-bottom:10px;">
+            <img src="{{ $authUser->avatar }}" alt="avatar" style="width:50px;height:50px;border-radius:50%;object-fit:cover;margin-bottom:10px;">
         @else
             <div class="sidebar-avatar">{{ strtoupper(mb_substr($userName, 0, 1)) }}</div>
         @endif
