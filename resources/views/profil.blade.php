@@ -40,7 +40,7 @@
     @if($errors->any())<div class="msg-err">{{ $errors->first() }}</div>@endif
 
     <div class="user-card">
-        <div class="avatar-wrapper" style="position:relative;cursor:pointer;" onclick="document.getElementById('avatar-input').click()">
+        <label for="avatar-input" class="avatar-wrapper" style="position:relative;cursor:pointer;display:inline-block;">
             @if($user->avatar)
                 <img src="/storage/{{ $user->avatar }}" alt="avatar" style="width:70px;height:70px;border-radius:50%;object-fit:cover;">
             @else
@@ -49,11 +49,11 @@
             <div style="position:absolute;bottom:0;right:0;background:var(--accent);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
                 <i data-lucide="camera" style="width:14px;height:14px;color:#fff;"></i>
             </div>
-            <form id="avatar-form" method="POST" action="/profil/update-avatar" enctype="multipart/form-data" style="display:none;">
-                @csrf
-                <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="document.getElementById('avatar-form').submit();">
-            </form>
-        </div>
+        </label>
+        <form id="avatar-form" method="POST" action="/profil/update-avatar" enctype="multipart/form-data" style="display:none;">
+            @csrf
+            <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="document.getElementById('avatar-form').submit();">
+        </form>
         <div class="user-info">
             <h2>{{ $user->nom ?? $user->name }}</h2>
             <p>{{ $user->email }}</p>
